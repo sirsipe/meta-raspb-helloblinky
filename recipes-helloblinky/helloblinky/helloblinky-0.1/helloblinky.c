@@ -35,7 +35,7 @@ void printLedStatus()
 {
   printf("Status: ");
  
-  char* val = readFile(RED);
+  char* val = readFile(LED);
 
   if (val && val[0] == '1')
     printf("on");
