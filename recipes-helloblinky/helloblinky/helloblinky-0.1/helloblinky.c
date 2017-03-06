@@ -1,56 +1,42 @@
 #include <stdio.h>
 
-
-#define LED_TRIGGER "/sys/classes/leds/led0/trigger"
-#define LED "/sys/classes/leds/led0/brightness"
-
-char readFirstCharFromFile(char* filename)
-{
-  // todo: obvious
-}
+#define BUILTIN_LED_TRIGGER "/sys/class/leds/led0/trigger"
+#define BUILTIN_LED "/sys/class/leds/led0/brightness"
 
 void writeToFile(char* filename, char* value)
 {
-  // todo: obvious
+  FILE * pFile;
+  pFile = fopen (filename, "w");
+  if (pFile!=NULL)
+  {
+    fputs (value ,pFile);
+    fclose (pFile);
+  }
 }
-
-void printLedStatus()
-{
-  printf("Status: ");
- 
-  char val = readFirstCharFromFile(LED);
-
-  if (val == '1')
-    printf("on");
-  else if (val == '0')
-    printf("off");
-  else
-    printf("unknown");
-
-  printf("\n");
-
- }
 
 int main(int argc, char **argv)
 {
 
-  if (argc == 2)
+  // First arg is program name; second is only valid if (startswith) 0 or 1
+  if (argc == 2 && (argv[1][0] == '0' || argv[1][0] == '1'))
   {
     
-    // If valid argument, remove possible triggers from led
-    // so it is now under our control.
-    if (argv[1][0] == '0' || argv[1][0] == '1')
-      writeToFile(LED_TRIGGER, "none");
- 
-    if (argv[1][0] == '1')
-      writeToFile(LED, "1");
-    else if (argv[1][0] == '0')
-      writeToFile(LED, "0");
-    else
-      printf("Unknown argument. Use 0 or 1.\n"); 
-}
+    // Remove possible triggers from led
+    // so it is now under our control. 
+    // This only needs to be done for built-in led0. 
+    writeToFile(BUILTIN_LED_TRIGGER, "none");
 
-  printLedStatus();
+    // Set value
+    if (argv[1][0] == '1')
+      writeToFile(BUILTIN_LED, "1"); // On
+    else if (argv[1][0] == '0')
+      writeToFile(BUILTIN_LED, "0"); // Off
+    
+  }
+  else
+    printf("Usage: %s [0|1]\n", argv[0]);
+
+
 
   return 0;
 }
