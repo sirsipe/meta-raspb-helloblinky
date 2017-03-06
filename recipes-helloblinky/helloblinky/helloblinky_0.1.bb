@@ -1,4 +1,3 @@
-#
 # This file was derived from the 'Hello World!' example recipe in the
 # Yocto Project Development Manual.
 #
@@ -22,3 +21,4 @@ do_install() {
 	     install -d ${D}${bindir}
 	     install -m 0755 helloblinky ${D}${bindir}
 }
+
