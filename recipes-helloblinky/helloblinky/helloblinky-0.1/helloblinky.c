@@ -4,7 +4,7 @@
 #define LED_TRIGGER "/sys/classes/leds/led0/trigger"
 #define LED "/sys/classes/leds/led0/brightness"
 
-char* readFile(char* filename)
+char readFirstCharFromFile(char* filename)
 {
   // todo: obvious
 }
@@ -14,32 +14,15 @@ void writeToFile(char* filename, char* value)
   // todo: obvious
 }
 
-void removeTriggers()
-{
-  writeToFile(LED_TRIGGER, "none");
-}
-
-void setOnOff(bool on)
-{
-
-  removeTriggers();
- 
-  if (on)
-    writeToFile(LED, "1");
-  else
-    writeToFile(LED, "0");
-
-}
-
 void printLedStatus()
 {
   printf("Status: ");
  
-  char* val = readFile(LED);
+  char val = readFirstCharFromFile(LED);
 
-  if (val && val[0] == '1')
+  if (val == '1')
     printf("on");
-  else if (val && val[0] == '0')
+  else if (val == '0')
     printf("off");
   else
     printf("unknown");
@@ -53,11 +36,19 @@ int main(int argc, char **argv)
 
   if (argc == 2)
   {
+    
+    // If valid argument, remove possible triggers from led
+    // so it is now under our control.
+    if (argv[1][0] == '0' || argv[1][0] == '1')
+      writeToFile(LED_TRIGGER, "none");
+ 
     if (argv[1][0] == '1')
-      setOnOff(true);
+      writeToFile(LED, "1");
     else if (argv[1][0] == '0')
-      setOnOff(false);
-  }
+      writeToFile(LED, "0");
+    else
+      printf("Unknown argument. Use 0 or 1.\n"); 
+}
 
   printLedStatus();
 
